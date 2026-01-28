@@ -3,6 +3,27 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-dark text-slate-200 antialiased m-0;
+  }
+}
+
+/* Custom scrollbar para luxo */
+::-webkit-scrollbar { 
+  width: 8px; 
+}
+::-webkit-scrollbar-track { 
+  background: #020617; 
+}
+::-webkit-scrollbar-thumb { 
+  background: #1e293b; 
+  border-radius: 10px; 
+}
+::-webkit-scrollbar-thumb:hover { 
+  background: #334155; 
+}
+
 .glass {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(12px);

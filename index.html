@@ -8,48 +8,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Plus Jakarta Sans', 'sans-serif'],
-            },
-            colors: {
-              dark: '#020617',
-              'dark-accent': '#0f172a',
-            }
-          }
-        }
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.4",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "react/": "https://esm.sh/react@^19.2.4/",
+        "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+        "vite": "https://esm.sh/vite@^7.3.1",
+        "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
       }
+    }
     </script>
-    <style>
-      body {
-        background-color: #020617;
-        color: #f8fafc;
-        margin: 0;
-        -webkit-font-smoothing: antialiased;
-      }
-      /* Custom scrollbar para luxo */
-      ::-webkit-scrollbar { width: 8px; }
-      ::-webkit-scrollbar-track { background: #020617; }
-      ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-      ::-webkit-scrollbar-thumb:hover { background: #334155; }
-    </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-    "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
-  }
-}
-</script>
 </head>
 <body class="bg-dark text-slate-200">
     <div id="root"></div>
