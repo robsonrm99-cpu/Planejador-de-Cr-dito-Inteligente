@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from 'react';
 import { 
   Car, 
@@ -6,13 +5,10 @@ import {
   Percent, 
   CheckCircle, 
   FileText, 
-  Loader2, 
   Zap,
   TrendingUp,
-  ArrowRight,
-  ShieldCheck,
-  CircleDollarSign,
-  PieChart
+  PieChart,
+  Target
 } from 'lucide-react';
 import { AssetType, SimulationResult, Configs } from './types';
 
@@ -24,7 +20,6 @@ export default function App() {
   const [tipoBem, setTipoBem] = useState<AssetType>('veiculo');
   const [valorCredito, setValorCredito] = useState(50000);
   const [showResults, setShowResults] = useState(false);
-  const [printStatus, setPrintStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   
   const [entradaFinan, setEntradaFinan] = useState(20000);
   const [parcelaAlvoFinan, setParcelaAlvoFinan] = useState(1850);
@@ -85,161 +80,148 @@ export default function App() {
   const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-500/30 selection:text-white">
-      
-      {/* Background Glows */}
-      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
-      <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow" style={{animationDelay: '2s'}}></div>
-
-      {/* Header Fixo/Glass */}
-      <nav className="sticky top-0 z-50 glass border-b border-white/5 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+      {/* Navbar */}
+      <nav className="border-b border-white/5 bg-slate-950/50 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2 rounded-lg shadow-lg shadow-blue-600/40">
+            <div className="bg-blue-600 p-2 rounded-lg neon-glow-blue">
               <PieChart size={20} className="text-white" />
             </div>
-            <h1 className="text-lg font-black tracking-tighter uppercase italic">
-              Elite<span className="text-blue-500">Credit</span>
-            </h1>
+            <div>
+              <span className="text-xl font-black italic tracking-tighter uppercase">ELITE<span className="text-blue-500">CREDIT</span></span>
+              <p className="text-[8px] font-bold text-slate-500 tracking-widest uppercase">High Performance Systems</p>
+            </div>
           </div>
-          <div className="hidden md:flex gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-             <span className="text-blue-400">Dashboard</span>
-             <span>Simulações</span>
-             <span>Relatórios</span>
+          <div className="flex gap-6">
+            <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest cursor-pointer border-b border-blue-500/50 pb-1">Análise</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest cursor-pointer hover:text-white transition-colors">Relatórios</span>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 py-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          {/* Coluna de Controles (Inputs) */}
-          <div className="lg:col-span-4 space-y-8">
-            <div className="glass rounded-3xl p-8 space-y-8">
-              <header className="space-y-1">
-                <h2 className="text-xs font-black uppercase tracking-[0.3em] text-blue-500">Configuração do Bem</h2>
-                <p className="text-slate-400 text-sm">Defina o objetivo do seu crédito.</p>
-              </header>
-
-              <div className="grid grid-cols-2 gap-2 p-1 bg-black/40 rounded-2xl border border-white/5">
-                <button 
-                  onClick={() => setTipoBem('veiculo')} 
-                  className={`flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${tipoBem === 'veiculo' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-500 hover:text-slate-300'}`}
-                >
-                  <Car size={16} /> Automóvel
-                </button>
-                <button 
-                  onClick={() => setTipoBem('imovel')} 
-                  className={`flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${tipoBem === 'imovel' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-500 hover:text-slate-300'}`}
-                >
-                  <Home size={16} /> Imóvel
-                </button>
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* Painel de Controle */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="glass p-8 rounded-[2rem] border border-white/5 shadow-2xl space-y-8">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-blue-500">
+                <Target size={14} />
+                <h2 className="text-[10px] font-black uppercase tracking-[0.3em]">Planejamento</h2>
               </div>
+              <p className="text-slate-400 text-sm">Configure os parâmetros do objetivo.</p>
+            </div>
 
-              <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Valor do Crédito</label>
-                <div className="relative group">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-600 group-focus-within:text-blue-500 transition-colors">R$</span>
-                  <input 
-                    type="number" 
-                    value={valorCredito} 
-                    onChange={(e) => setValorCredito(Number(e.target.value))} 
-                    className="w-full bg-black/50 border border-white/10 rounded-2xl py-5 pl-12 pr-6 text-2xl font-black text-white outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-6 pt-6 border-t border-white/5">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-red-500">
-                    <Percent size={14} strokeWidth={3} />
-                    <h3 className="text-[10px] font-black uppercase tracking-widest">Cenário Bancário</h3>
-                  </div>
-                  <SimulationInput label="Entrada" value={entradaFinan} onChange={setEntradaFinan} color="red" />
-                  <SimulationInput label="Parcela Máxima" value={parcelaAlvoFinan} onChange={setParcelaAlvoFinan} color="red" />
-                </div>
-
-                <div className="space-y-4 pt-6 border-t border-white/5">
-                  <div className="flex items-center gap-2 text-emerald-500">
-                    <CheckCircle size={14} strokeWidth={3} />
-                    <h3 className="text-[10px] font-black uppercase tracking-widest">Plano Estratégico</h3>
-                  </div>
-                  <SimulationInput label="Lance / Adesão" value={lanceConsorcio} onChange={setLanceConsorcio} color="emerald" />
-                  <SimulationInput label="Parcela Ideal" value={parcelaAlvoConsorcio} onChange={setParcelaAlvoConsorcio} color="emerald" />
-                </div>
-              </div>
-
+            <div className="grid grid-cols-2 gap-2 p-1 bg-black/40 rounded-xl">
               <button 
-                onClick={() => setShowResults(true)}
-                className="w-full py-5 bg-white text-black font-black rounded-2xl hover:bg-blue-500 hover:text-white transition-all active:scale-[0.98] flex items-center justify-center gap-3 uppercase text-[11px] tracking-widest shadow-2xl"
+                onClick={() => setTipoBem('veiculo')}
+                className={`flex items-center justify-center gap-2 py-3 rounded-lg text-[10px] font-black uppercase transition-all ${tipoBem === 'veiculo' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
               >
-                <Zap size={18} fill="currentColor" /> Analisar Resultados
+                <Car size={14} /> Veículo
+              </button>
+              <button 
+                onClick={() => setTipoBem('imovel')}
+                className={`flex items-center justify-center gap-2 py-3 rounded-lg text-[10px] font-black uppercase transition-all ${tipoBem === 'imovel' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+              >
+                <Home size={14} /> Imóvel
               </button>
             </div>
-          </div>
 
-          {/* Coluna de Resultados (Dashboard) */}
-          <div className="lg:col-span-8 space-y-8">
-            {!showResults ? (
-              <div className="h-full min-h-[500px] flex flex-col items-center justify-center glass rounded-[3rem] border-dashed border-white/10 text-center p-12">
-                <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mb-6 animate-bounce">
-                  <TrendingUp className="text-blue-500" size={32} />
-                </div>
-                <h3 className="text-2xl font-black text-white mb-2">Simulação Pendente</h3>
-                <p className="text-slate-500 max-w-xs text-sm">Configure os valores ao lado e clique em analisar para visualizar seu relatório de economia.</p>
+            <div className="space-y-4">
+              <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Valor do Crédito</label>
+              <div className="relative group">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-600 group-focus-within:text-blue-500">R$</span>
+                <input 
+                  type="number"
+                  value={valorCredito}
+                  onChange={(e) => setValorCredito(Number(e.target.value))}
+                  className="w-full bg-slate-900 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-2xl font-black text-white focus:border-blue-500 outline-none transition-all shadow-inner"
+                />
               </div>
-            ) : (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                
-                {/* Banner de Economia (Hero) */}
-                <div className="glass rounded-[3rem] p-10 md:p-14 relative overflow-hidden group border-emerald-500/20">
-                  <div className="absolute top-0 right-0 w-full h-full bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors"></div>
-                  <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="space-y-4 text-center md:text-left">
-                      <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-[9px] font-black uppercase tracking-[0.3em] rounded-full border border-emerald-500/20">Alpha Advantage</span>
-                      <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
-                        Economia de <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
-                          {formatCurrency(simulacao.economia)}
-                        </span>
-                      </h2>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="text-5xl font-black text-white">{simulacao.economiaPorcentagem.toFixed(0)}%</div>
-                      <div className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Retorno de Capital</div>
-                    </div>
-                  </div>
-                </div>
+            </div>
 
-                {/* Cards Comparativos */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <ComparisonCard type="financiamento" data={simulacao.financiamento} formatCurrency={formatCurrency} />
-                  <ComparisonCard type="consorcio" data={simulacao.consorcio} formatCurrency={formatCurrency} isRecommended />
-                </div>
+            <div className="space-y-6 pt-6 border-t border-white/5">
+              <div className="space-y-4">
+                <h3 className="text-[10px] font-black uppercase text-red-500 tracking-widest flex items-center gap-2">
+                  <Percent size={12} /> Canal Bancário
+                </h3>
+                <SimulationInput label="Aporte de Entrada" value={entradaFinan} onChange={setEntradaFinan} color="red" />
+                <SimulationInput label="Parcela Máxima" value={parcelaAlvoFinan} onChange={setParcelaAlvoFinan} color="red" />
+              </div>
 
-                {/* Ações */}
-                <div className="flex flex-col md:flex-row gap-4">
-                  <button 
-                    onClick={() => {
-                      const html = generatePrintHTML(tipoBem, valorCredito, configs, simulacao);
-                      const win = window.open('', '_blank');
-                      win?.document.write(html);
-                      win?.document.close();
-                    }}
-                    className="flex-1 py-5 glass hover:bg-white/10 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all"
-                  >
-                    <FileText size={18} className="text-blue-500" /> Baixar Proposta Executiva
-                  </button>
+              <div className="space-y-4 pt-6 border-t border-white/5">
+                <h3 className="text-[10px] font-black uppercase text-emerald-500 tracking-widest flex items-center gap-2">
+                  <CheckCircle size={12} /> Canal Estratégico
+                </h3>
+                <SimulationInput label="Entrada (adesão)" value={lanceConsorcio} onChange={setLanceConsorcio} color="emerald" />
+                <SimulationInput label="Parcela Ideal" value={parcelaAlvoConsorcio} onChange={setParcelaAlvoConsorcio} color="emerald" />
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setShowResults(true)}
+              className="w-full py-5 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-black rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase text-xs tracking-widest shadow-xl shadow-blue-500/20"
+            >
+              <Zap size={16} fill="currentColor" /> Calcular Estratégia
+            </button>
+          </div>
+        </div>
+
+        {/* Resultados */}
+        <div className="lg:col-span-8">
+          {!showResults ? (
+            <div className="h-full flex flex-col items-center justify-center glass rounded-[3rem] border-dashed border-white/10 p-20 text-center">
+              <TrendingUp className="text-slate-700 mb-6" size={64} />
+              <h3 className="text-2xl font-black text-slate-400 uppercase tracking-tighter italic">Simulação Pendente</h3>
+              <p className="text-slate-600 max-w-xs text-sm mt-2">Defina os valores ao lado para processar a inteligência de crédito.</p>
+            </div>
+          ) : (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              
+              {/* Card de Economia Hero */}
+              <div className="glass rounded-[3rem] p-12 border-emerald-500/20 neon-glow-emerald flex flex-col md:flex-row justify-between items-center gap-10">
+                <div className="space-y-2">
+                  <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Performance Alpha Detectada</span>
+                  <h2 className="text-5xl font-black text-white italic tracking-tighter">
+                    Economia de <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200">
+                      {formatCurrency(simulacao.economia)}
+                    </span>
+                  </h2>
+                </div>
+                <div className="bg-black/40 border border-white/10 rounded-[2rem] p-10 text-center min-w-[200px]">
+                  <p className="text-6xl font-black text-emerald-400 leading-none">{simulacao.economiaPorcentagem.toFixed(0)}%</p>
+                  <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-4">Eficiência Financeira</p>
                 </div>
               </div>
-            )}
-          </div>
 
+              {/* Grid de Comparação */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <ComparisonCard type="financiamento" data={simulacao.financiamento} formatCurrency={formatCurrency} />
+                <ComparisonCard type="consorcio" data={simulacao.consorcio} formatCurrency={formatCurrency} isRecommended />
+              </div>
+
+              {/* Botão de PDF */}
+              <button 
+                onClick={() => {
+                  const html = generatePrintHTML(tipoBem, valorCredito, configs, simulacao);
+                  const win = window.open('', '_blank');
+                  win?.document.write(html);
+                  win?.document.close();
+                }}
+                className="w-full py-6 glass rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-4 hover:bg-white/5 transition-all group"
+              >
+                <FileText size={18} className="text-blue-500 group-hover:scale-110 transition-transform" /> 
+                Gerar Proposta Executiva em PDF
+              </button>
+            </div>
+          )}
         </div>
       </main>
 
-      <footer className="py-20 text-center border-t border-white/5 mt-20">
-        <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">Engine de Inteligência de Crédito &copy; 2025</p>
+      <footer className="py-10 text-center border-t border-white/5">
+        <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em]">Engine de Inteligência de Crédito &copy; 2025</p>
       </footer>
     </div>
   );
