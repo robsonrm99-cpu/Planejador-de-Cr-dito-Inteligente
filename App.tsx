@@ -32,6 +32,19 @@ export default function App() {
       : { taxaConsorcioFixa: 26, maxMeses: 150 };
   }, [tipoBem]);
 
+  const handleValorCreditoChange = (novoValor: number) => {
+    setValorCredito(novoValor);
+    setEntradaFinan(novoValor * 0.4);
+    setLanceConsorcio(novoValor * 0.3);
+    if (tipoBem === 'veiculo') {
+      setParcelaAlvoFinan(Math.round(novoValor * 0.037));
+      setParcelaAlvoConsorcio(Math.round(novoValor * 0.02));
+    } else {
+      setParcelaAlvoFinan(Math.round(novoValor * 0.0125));
+      setParcelaAlvoConsorcio(Math.round(novoValor * 0.0075));
+    }
+  };
+
   useEffect(() => {
     const isImovel = tipoBem === 'imovel';
     const baseVal = isImovel ? 200000 : 50000;
@@ -80,79 +93,79 @@ export default function App() {
   const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-blue-100">
       {/* Navbar */}
-      <nav className="border-b border-white/5 bg-slate-950/50 backdrop-blur-xl sticky top-0 z-50">
+      <nav className="border-b border-slate-200 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2 rounded-lg neon-glow-blue">
+            <div className="bg-blue-600 p-2 rounded-lg shadow-lg shadow-blue-500/10">
               <PieChart size={20} className="text-white" />
             </div>
             <div>
-              <span className="text-xl font-black italic tracking-tighter uppercase">ELITE<span className="text-blue-500">CREDIT</span></span>
-              <p className="text-[8px] font-bold text-slate-500 tracking-widest uppercase">High Performance Systems</p>
+              <span className="text-xl font-black italic tracking-tighter uppercase text-slate-900">ELITE<span className="text-blue-600">CREDIT</span></span>
+              <p className="text-[8px] font-bold text-slate-400 tracking-widest uppercase">High Performance Decision System</p>
             </div>
           </div>
           <div className="flex gap-6">
-            <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest cursor-pointer border-b border-blue-500/50 pb-1">Análise</span>
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest cursor-pointer hover:text-white transition-colors">Relatórios</span>
+            <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-widest cursor-pointer border-b-2 border-blue-600 pb-1">Análise Estratégica</span>
+            <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest cursor-pointer hover:text-slate-900 transition-colors">Relatórios</span>
           </div>
         </div>
       </nav>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
         
         {/* Painel de Controle */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="glass p-8 rounded-[2rem] border border-white/5 shadow-2xl space-y-8">
+          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-xl space-y-8">
             <div className="space-y-1">
-              <div className="flex items-center gap-2 text-blue-500">
+              <div className="flex items-center gap-2 text-blue-600">
                 <Target size={14} />
                 <h2 className="text-[10px] font-black uppercase tracking-[0.3em]">Planejamento</h2>
               </div>
-              <p className="text-slate-400 text-sm">Configure os parâmetros do objetivo.</p>
+              <p className="text-slate-500 text-sm font-medium">Parâmetros de aquisição.</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 p-1 bg-black/40 rounded-xl">
+            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-2xl">
               <button 
                 onClick={() => setTipoBem('veiculo')}
-                className={`flex items-center justify-center gap-2 py-3 rounded-lg text-[10px] font-black uppercase transition-all ${tipoBem === 'veiculo' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                className={`flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${tipoBem === 'veiculo' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 <Car size={14} /> Veículo
               </button>
               <button 
                 onClick={() => setTipoBem('imovel')}
-                className={`flex items-center justify-center gap-2 py-3 rounded-lg text-[10px] font-black uppercase transition-all ${tipoBem === 'imovel' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                className={`flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${tipoBem === 'imovel' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 <Home size={14} /> Imóvel
               </button>
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Valor do Crédito</label>
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Valor do Objetivo</label>
               <div className="relative group">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-600 group-focus-within:text-blue-500">R$</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-300 group-focus-within:text-blue-600 transition-colors">R$</span>
                 <input 
                   type="number"
                   value={valorCredito}
-                  onChange={(e) => setValorCredito(Number(e.target.value))}
-                  className="w-full bg-slate-900 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-2xl font-black text-white focus:border-blue-500 outline-none transition-all shadow-inner"
+                  onChange={(e) => handleValorCreditoChange(Number(e.target.value))}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-5 pl-12 pr-4 text-2xl font-black text-slate-900 focus:border-blue-500 focus:bg-white outline-none transition-all shadow-sm"
                 />
               </div>
             </div>
 
-            <div className="space-y-6 pt-6 border-t border-white/5">
+            <div className="space-y-6 pt-6 border-t border-slate-100">
               <div className="space-y-4">
                 <h3 className="text-[10px] font-black uppercase text-red-500 tracking-widest flex items-center gap-2">
-                  <Percent size={12} /> Canal Bancário
+                  <Percent size={12} /> Projeção Bancária
                 </h3>
-                <SimulationInput label="Aporte de Entrada" value={entradaFinan} onChange={setEntradaFinan} color="red" />
+                <SimulationInput label="Aporte de Entrada (40%)" value={entradaFinan} onChange={setEntradaFinan} color="red" />
                 <SimulationInput label="Parcela Máxima" value={parcelaAlvoFinan} onChange={setParcelaAlvoFinan} color="red" />
               </div>
 
-              <div className="space-y-4 pt-6 border-t border-white/5">
-                <h3 className="text-[10px] font-black uppercase text-emerald-500 tracking-widest flex items-center gap-2">
-                  <CheckCircle size={12} /> Canal Estratégico
+              <div className="space-y-4 pt-6 border-t border-slate-100">
+                <h3 className="text-[10px] font-black uppercase text-emerald-600 tracking-widest flex items-center gap-2">
+                  <CheckCircle size={12} /> Projeção Inteligente
                 </h3>
                 <SimulationInput label="Entrada (adesão)" value={lanceConsorcio} onChange={setLanceConsorcio} color="emerald" />
                 <SimulationInput label="Parcela Ideal" value={parcelaAlvoConsorcio} onChange={setParcelaAlvoConsorcio} color="emerald" />
@@ -161,9 +174,9 @@ export default function App() {
 
             <button 
               onClick={() => setShowResults(true)}
-              className="w-full py-5 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-black rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase text-xs tracking-widest shadow-xl shadow-blue-500/20"
+              className="w-full py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase text-xs tracking-widest btn-primary-glow"
             >
-              <Zap size={16} fill="currentColor" /> Calcular Estratégia
+              <Zap size={16} fill="currentColor" /> Processar Análise
             </button>
           </div>
         </div>
@@ -171,28 +184,31 @@ export default function App() {
         {/* Resultados */}
         <div className="lg:col-span-8">
           {!showResults ? (
-            <div className="h-full flex flex-col items-center justify-center glass rounded-[3rem] border-dashed border-white/10 p-20 text-center">
-              <TrendingUp className="text-slate-700 mb-6" size={64} />
-              <h3 className="text-2xl font-black text-slate-400 uppercase tracking-tighter italic">Simulação Pendente</h3>
-              <p className="text-slate-600 max-w-xs text-sm mt-2">Defina os valores ao lado para processar a inteligência de crédito.</p>
+            <div className="h-full flex flex-col items-center justify-center bg-white rounded-[3rem] border-2 border-dashed border-slate-200 p-20 text-center">
+              <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
+                <TrendingUp className="text-slate-300" size={32} />
+              </div>
+              <h3 className="text-2xl font-black text-slate-300 uppercase tracking-tighter italic">Simulação Aguardando</h3>
+              <p className="text-slate-400 max-w-xs text-sm mt-2 font-medium">Insira os valores no painel lateral para visualizar a inteligência comparativa.</p>
             </div>
           ) : (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
               
               {/* Card de Economia Hero */}
-              <div className="glass rounded-[3rem] p-12 border-emerald-500/20 neon-glow-emerald flex flex-col md:flex-row justify-between items-center gap-10">
-                <div className="space-y-2">
-                  <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Performance Alpha Detectada</span>
-                  <h2 className="text-5xl font-black text-white italic tracking-tighter">
-                    Economia de <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200">
+              <div className="bg-white rounded-[3rem] p-12 border border-slate-200 premium-shadow flex flex-col md:flex-row justify-between items-center gap-10 overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[100px] -mr-32 -mt-32"></div>
+                <div className="space-y-2 text-center md:text-left relative z-10">
+                  <span className="text-[10px] font-black text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-[0.3em]">Eficiência Máxima Detectada</span>
+                  <h2 className="text-5xl font-black text-slate-900 italic tracking-tighter mt-4">
+                    Economia Real de <br />
+                    <span className="text-emerald-600">
                       {formatCurrency(simulacao.economia)}
                     </span>
                   </h2>
                 </div>
-                <div className="bg-black/40 border border-white/10 rounded-[2rem] p-10 text-center min-w-[200px]">
+                <div className="bg-slate-900 rounded-[2.5rem] p-10 text-center min-w-[220px] shadow-2xl relative z-10">
                   <p className="text-6xl font-black text-emerald-400 leading-none">{simulacao.economiaPorcentagem.toFixed(0)}%</p>
-                  <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-4">Eficiência Financeira</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-4">Poder de Alavancagem</p>
                 </div>
               </div>
 
@@ -210,18 +226,18 @@ export default function App() {
                   win?.document.write(html);
                   win?.document.close();
                 }}
-                className="w-full py-6 glass rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-4 hover:bg-white/5 transition-all group"
+                className="w-full py-6 bg-white border border-slate-200 rounded-3xl text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center justify-center gap-4 hover:bg-slate-50 hover:text-slate-900 transition-all group shadow-sm"
               >
-                <FileText size={18} className="text-blue-500 group-hover:scale-110 transition-transform" /> 
-                Gerar Proposta Executiva em PDF
+                <FileText size={18} className="text-blue-600 group-hover:scale-110 transition-transform" /> 
+                Exportar Proposta Comercial Executiva (PDF)
               </button>
             </div>
           )}
         </div>
       </main>
 
-      <footer className="py-10 text-center border-t border-white/5">
-        <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em]">Engine de Inteligência de Crédito &copy; 2025</p>
+      <footer className="py-10 text-center border-t border-slate-200 mt-auto bg-white">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.4em]">Proprietary Credit Algorithm &copy; 2025 ELITE STRATEGY</p>
       </footer>
     </div>
   );

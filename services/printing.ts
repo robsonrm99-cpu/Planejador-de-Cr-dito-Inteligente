@@ -18,34 +18,38 @@ export const generatePrintHTML = (
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
         <style>
+          * { 
+            box-sizing: border-box; 
+            -webkit-print-color-adjust: exact; 
+            print-color-adjust: exact; 
+          }
+          
           @media print {
             @page { 
               size: A4;
               margin: 10mm; 
             }
             body { 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact; 
                 background: white !important;
-                margin: 0;
-                padding: 0;
+                margin: 0 !important;
+                padding: 0 !important;
             }
             .print-container {
-              width: 190mm;
-              margin: 0;
-              padding: 0;
-              box-shadow: none;
-              border: none;
-              overflow: hidden;
+              width: 100% !important;
+              max-width: 190mm;
+              margin: 0 auto !important;
+              padding: 0 !important;
+              box-shadow: none !important;
+              border: none !important;
             }
-            .no-print-margin { margin-top: 0 !important; }
+            .no-print { display: none; }
           }
           
           body { 
             font-family: 'Inter', sans-serif; 
             background: #f1f5f9;
             margin: 0;
-            padding: 10px 0;
+            padding: 20px 0;
             display: flex;
             justify-content: center;
           }
@@ -53,11 +57,12 @@ export const generatePrintHTML = (
           .print-container {
             background: white;
             width: 190mm;
-            padding: 10mm 15mm;
+            padding: 10mm;
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+            position: relative;
           }
 
           .section-border {
@@ -65,6 +70,7 @@ export const generatePrintHTML = (
             border-radius: 12px;
             overflow: hidden;
             width: 100%;
+            page-break-inside: avoid;
           }
 
           .badge {
@@ -77,24 +83,24 @@ export const generatePrintHTML = (
           }
 
           .card-header {
-            padding: 10px 20px;
+            padding: 8px 20px;
             border-bottom: 1px solid #f1f5f9;
           }
           
           .card-body {
-            padding: 15px 24px;
+            padding: 12px 24px;
           }
 
           .card-footer {
-            padding: 10px 24px;
+            padding: 8px 24px;
             background-color: #fafafa;
             border-top: 1px solid #f1f5f9;
           }
 
           .math-box {
             border-radius: 10px;
-            padding: 12px 18px;
-            margin: 8px 0;
+            padding: 10px 18px;
+            margin: 5px 0;
           }
           
           .value-main { font-weight: 900; letter-spacing: -0.05em; }
@@ -103,12 +109,12 @@ export const generatePrintHTML = (
         </style>
       </head>
       <body>
-        <div class="print-container no-print-margin">
+        <div class="print-container">
           <!-- Header -->
-          <div class="full-width flex justify-between items-end pb-4 border-b-2 border-slate-900">
+          <div class="full-width flex justify-between items-end pb-3 border-b-2 border-slate-900">
             <div>
               <h1 class="text-2xl font-black text-slate-900 tracking-tighter leading-none uppercase">PLANEJAMENTO DE CRÉDITO</h1>
-              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-2">Relatório Estratégico de Performance Financeira</p>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1.5">Relatório Estratégico de Performance Financeira</p>
             </div>
             <div class="text-right">
               <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Emissão</p>
@@ -118,22 +124,22 @@ export const generatePrintHTML = (
 
           <!-- Dados da Simulação -->
           <div class="section-border bg-slate-50">
-            <div class="grid grid-cols-4 px-6 py-4 gap-4">
+            <div class="grid grid-cols-4 px-6 py-3 gap-4">
               <div>
                 <p class="text-[8px] font-bold text-slate-400 uppercase mb-0.5">Bem Simulado</p>
-                <p class="text-xs font-black text-slate-800 uppercase tracking-tighter">${tipoBem === 'veiculo' ? 'Veículo / Auto' : 'Imóvel Residencial'}</p>
+                <p class="text-[11px] font-black text-slate-800 uppercase tracking-tighter">${tipoBem === 'veiculo' ? 'Veículo / Auto' : 'Imóvel Residencial'}</p>
               </div>
               <div>
                 <p class="text-[8px] font-bold text-slate-400 uppercase mb-0.5">Valor do Crédito</p>
-                <p class="text-xs font-black text-slate-800">${format(valorCredito)}</p>
+                <p class="text-[11px] font-black text-slate-800">${format(valorCredito)}</p>
               </div>
               <div>
                 <p class="text-[8px] font-bold text-slate-400 uppercase mb-0.5">Referência</p>
-                <p class="text-xs font-black text-slate-800 italic">SELIC + CET</p>
+                <p class="text-[11px] font-black text-slate-800 italic">SELIC + CET</p>
               </div>
               <div>
                 <p class="text-[8px] font-bold text-slate-400 uppercase mb-0.5">Custo Estratégico</p>
-                <p class="text-xs font-black text-slate-800">${configs.taxaConsorcioFixa}% Taxa Fixa</p>
+                <p class="text-[11px] font-black text-slate-800">${configs.taxaConsorcioFixa}% Taxa Fixa</p>
               </div>
             </div>
           </div>
@@ -145,13 +151,13 @@ export const generatePrintHTML = (
               <span class="badge bg-red-100 text-red-700 border border-red-200">Convencional</span>
             </div>
             <div class="card-body">
-              <div class="flex justify-between items-center mb-2">
+              <div class="flex justify-between items-center mb-1">
                 <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Aporte de Entrada</span>
                 <span class="text-[10px] font-black text-slate-900">${format(simulacao.financiamento.entrada)}</span>
               </div>
               
-              <div class="mb-2">
-                <p class="text-[8px] text-slate-400 font-black uppercase mb-1">Parcela Mensal Estimada</p>
+              <div class="mb-1">
+                <p class="text-[8px] text-slate-400 font-black uppercase mb-0.5">Parcela Mensal Estimada</p>
                 <p class="text-3xl font-black text-slate-900 value-main leading-none">${format(simulacao.financiamento.parcela)}</p>
               </div>
 
@@ -183,13 +189,13 @@ export const generatePrintHTML = (
               <span class="badge bg-emerald-600 text-white shadow-sm">Recomendação Estratégica</span>
             </div>
             <div class="card-body">
-              <div class="flex justify-between items-center mb-2">
+              <div class="flex justify-between items-center mb-1">
                 <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Entrada (adesão)</span>
                 <span class="text-[10px] font-black text-emerald-700">${format(simulacao.consorcio.lance)}</span>
               </div>
               
-              <div class="mb-2">
-                <p class="text-[8px] text-slate-400 font-black uppercase mb-1">Parcela Planejada</p>
+              <div class="mb-1">
+                <p class="text-[8px] text-slate-400 font-black uppercase mb-0.5">Parcela Planejada</p>
                 <p class="text-3xl font-black text-emerald-600 value-main leading-none">${format(simulacao.consorcio.parcela)}</p>
               </div>
 
@@ -215,11 +221,11 @@ export const generatePrintHTML = (
           </div>
 
           <!-- Economia Gerada -->
-          <div class="section-border p-6 flex justify-between items-center bg-emerald-50 border-2 border-emerald-600 mt-2">
+          <div class="section-border p-5 flex justify-between items-center bg-emerald-50 border-2 border-emerald-600">
             <div>
-              <p class="text-[10px] font-black text-emerald-700 uppercase tracking-[0.2em] mb-1">Capital Preservado (Economia)</p>
+              <p class="text-[10px] font-black text-emerald-700 uppercase tracking-[0.2em] mb-0.5">Capital Preservado (Economia)</p>
               <p class="text-4xl font-black tracking-tighter leading-none text-slate-900">${format(simulacao.economia)}</p>
-              <p class="text-[9px] text-slate-500 font-bold uppercase mt-2 italic">Eficiência de capital superior ao mercado financeiro</p>
+              <p class="text-[9px] text-slate-500 font-bold uppercase mt-1 italic">Eficiência de capital superior ao mercado financeiro</p>
             </div>
             <div class="text-right flex flex-col items-end gap-2">
               <div class="bg-emerald-600 px-4 py-2 rounded-xl shadow-lg">
@@ -230,7 +236,7 @@ export const generatePrintHTML = (
           </div>
 
           <!-- Footer -->
-          <div class="full-width mt-2 pt-4 border-t border-slate-200">
+          <div class="full-width pt-3 border-t border-slate-200">
             <div class="flex justify-between items-start">
                 <div class="w-3/4">
                     <p class="text-[7px] text-slate-400 leading-tight font-semibold uppercase tracking-tight">
@@ -247,7 +253,7 @@ export const generatePrintHTML = (
 
         <script>
             window.onload = function() { 
-                setTimeout(() => { window.print(); }, 800);
+                setTimeout(() => { window.print(); }, 500);
             }
         </script>
       </body>
