@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Car, 
   Home, 
@@ -8,7 +8,11 @@ import {
   Zap,
   TrendingUp,
   PieChart,
-  Target
+  Target,
+  Lock,
+  KeyRound,
+  ShieldCheck,
+  AlertCircle
 } from 'lucide-react';
 import { AssetType, SimulationResult, Configs } from './types';
 
@@ -16,7 +20,22 @@ import SimulationInput from './components/SimulationInput';
 import ComparisonCard from './components/ComparisonCard';
 import { generatePrintHTML } from './services/printing';
 
+// Lista fixa de chaves de acesso permitidas
+const VALID_KEYS = [
+  'DEMO-RBX-01',
+  'DEMO-RBX-02',
+  'DEMO-RBX-03',
+  'DEMO-RBX-04',
+  'DEMO-RBX-05'
+];
+
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [accessKey, setAccessKey] = useState('');
+  const [authError, setAuthError] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Estados do App Principal
   const [tipoBem, setTipoBem] = useState<AssetType>('veiculo');
   const [valorCredito, setValorCredito] = useState(50000);
   const [showResults, setShowResults] = useState(false);
@@ -25,6 +44,35 @@ export default function App() {
   const [parcelaAlvoFinan, setParcelaAlvoFinan] = useState(1850);
   const [lanceConsorcio, setLanceConsorcio] = useState(15000); 
   const [parcelaAlvoConsorcio, setParcelaAlvoConsorcio] = useState(1000);
+
+  // Verificação inicial de autenticação
+  useEffect(() => {
+    const savedKey = localStorage.getItem('elite_access_key');
+    if (savedKey && VALID_KEYS.includes(savedKey)) {
+      setIsAuthenticated(true);
+    }
+    setIsCheckingAuth(false);
+  }, []);
+
+  // Fix: Added React to imports to resolve namespace error on FormEvent
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanKey = accessKey.trim().toUpperCase();
+    if (VALID_KEYS.includes(cleanKey)) {
+      localStorage.setItem('elite_access_key', cleanKey);
+      setIsAuthenticated(true);
+      setAuthError(false);
+    } else {
+      setAuthError(true);
+      setTimeout(() => setAuthError(false), 3000);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('elite_access_key');
+    setIsAuthenticated(false);
+    setAccessKey('');
+  };
 
   const configs = useMemo<Configs>(() => {
     return tipoBem === 'imovel' 
@@ -46,6 +94,7 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     const isImovel = tipoBem === 'imovel';
     const baseVal = isImovel ? 200000 : 50000;
     setValorCredito(baseVal);
@@ -54,7 +103,7 @@ export default function App() {
     setEntradaFinan(baseVal * 0.4);
     setLanceConsorcio(baseVal * 0.3);
     setShowResults(false);
-  }, [tipoBem]);
+  }, [tipoBem, isAuthenticated]);
 
   const simulacao = useMemo<SimulationResult>(() => {
     const saldoDevedorFinan = Math.max(0, valorCredito - entradaFinan);
@@ -92,6 +141,74 @@ export default function App() {
 
   const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
+  // Renderização do Estado de Carregamento
+  if (isCheckingAuth) {
+    return <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="animate-pulse flex flex-col items-center">
+        <PieChart size={40} className="text-blue-600 mb-4" />
+        <div className="h-2 w-32 bg-slate-200 rounded-full"></div>
+      </div>
+    </div>;
+  }
+
+  // Renderização do Gate de Acesso
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
+        <div className="max-w-md w-full">
+          <div className="bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-200 text-center space-y-8 animate-in fade-in zoom-in duration-500">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-20 h-20 bg-blue-50 rounded-[2rem] flex items-center justify-center text-blue-600 shadow-inner">
+                <Lock size={32} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black italic tracking-tighter uppercase text-slate-900 leading-none">ELITE<span className="text-blue-600">CREDIT</span></h1>
+                <p className="text-[9px] font-bold text-slate-400 tracking-[0.2em] uppercase mt-2">Sistema de Alta Performance</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-slate-500 text-sm font-medium">Este sistema é restrito a consultores autorizados. Insira sua chave de acesso.</p>
+              
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="relative group">
+                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${authError ? 'text-red-500' : 'text-slate-300 group-focus-within:text-blue-600'}`}>
+                    <KeyRound size={20} />
+                  </div>
+                  <input 
+                    type="password"
+                    value={accessKey}
+                    onChange={(e) => setAccessKey(e.target.value)}
+                    placeholder="Chave de Acesso"
+                    className={`w-full bg-slate-50 border ${authError ? 'border-red-300 ring-2 ring-red-100' : 'border-slate-200 focus:border-blue-500 focus:bg-white'} rounded-2xl py-4 pl-12 pr-4 font-bold text-slate-800 outline-none transition-all shadow-sm tracking-widest`}
+                  />
+                </div>
+
+                {authError && (
+                  <div className="flex items-center justify-center gap-2 text-red-500 text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-top-1 duration-200">
+                    <AlertCircle size={12} /> Chave inválida ou expirada
+                  </div>
+                )}
+
+                <button 
+                  type="submit"
+                  className="w-full py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-black active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase text-xs tracking-[0.2em] shadow-xl"
+                >
+                  <ShieldCheck size={18} /> Liberar Sistema
+                </button>
+              </form>
+            </div>
+
+            <div className="pt-6 border-t border-slate-100">
+              <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Acesso Restrito &copy; 2025 ELITE STRATEGY</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // App Principal (Autenticado)
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-blue-100">
       {/* Navbar */}
@@ -106,9 +223,14 @@ export default function App() {
               <p className="text-[8px] font-bold text-slate-400 tracking-widest uppercase">High Performance Decision System</p>
             </div>
           </div>
-          <div className="flex gap-6">
+          <div className="flex items-center gap-6">
             <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-widest cursor-pointer border-b-2 border-blue-600 pb-1">Análise Estratégica</span>
-            <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest cursor-pointer hover:text-slate-900 transition-colors">Relatórios</span>
+            <button 
+              onClick={handleLogout}
+              className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hover:text-red-500 transition-colors flex items-center gap-1.5"
+            >
+              Sair <Lock size={10} />
+            </button>
           </div>
         </div>
       </nav>
